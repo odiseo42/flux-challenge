@@ -1,5 +1,4 @@
 import { SITHS_API } from '../config';
-import R from 'ramda';
 import xhr from 'xhr';
 import { redMatch, sithsToLoad, requestsToCancel } from '../selectors';
 
@@ -32,7 +31,8 @@ function getRequest(sithId) {
 
 function loadSiths() {
   return (dispatch, getState) => {
-    sithsToLoad(getState())
+    const state = getState();
+    sithsToLoad(state)
       .map((sithToLoad) => {
         return {
           direction: sithToLoad.direction,
@@ -49,10 +49,11 @@ function loadSiths() {
         req.promise.then((sith) => {
           dispatch({ type: SITH_LOADED, direction, sith });
 
-          const dispatchNext = redMatch(getState()) ?
+          const dispatchNext = redMatch(state) ?
             cancelUnnecessaryRequests :
             loadSiths;
-          R.compose(dispatch, dispatchNext)();
+          
+          dispatch(dispatchNext());
         },
         (err) => {
           if(err.message !== ABORT_MSG) throw err;
@@ -93,7 +94,7 @@ export function obiWanMoved(planet) {
 
     if(redMatchBefore !== redMatchAfter) {
       const action = redMatchAfter ? cancelUnnecessaryRequests : loadSiths;
-      R.compose(dispatch, action)();
+      dispatch(action());
     }
   };
 }

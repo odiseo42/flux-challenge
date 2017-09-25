@@ -38,6 +38,9 @@ module.exports = {
   },  
   plugins: [
     HtmlWebpackPluginConfig,
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.ProvidePlugin({
+      React: 'react' // ReactJS module name in node_modules folder
+    })
   ]  
 };

@@ -1,16 +1,18 @@
-import React, { Component, PropTypes } from 'react';
+import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { ui } from '../selectors';
 import PlanetMonitor from '../components/PlanetMonitor';
 import Siths from '../components/Siths';
 import ScrollButtons from '../components/ScrollButtons';
 import {
-  initialRequest, obiWanMoved,
-  scroll, UP, DOWN
+  initialRequest,
+  obiWanMoved,
+  scroll,
+  UP,
+  DOWN
 } from '../actions';
 import { OBI_WS } from '../config';
 
-React;
 class App extends Component {
   constructor(props) {
     super(props);

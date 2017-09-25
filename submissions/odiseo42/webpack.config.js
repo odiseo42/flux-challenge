@@ -3,6 +3,9 @@
 */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+
+
 const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
   template: './src/index.html',
   filename: 'index.html',
@@ -12,8 +15,13 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 module.exports = {
   entry: './src/app.js',
   output: {
-    path: path.resolve('dist'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  devtool: 'inline-source-map',
+  devServer: {
+    contentBase: './dist',
+    hot: true
   },
   module: {
     loaders: [
@@ -21,5 +29,8 @@ module.exports = {
       { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ }
     ]
   },
-  plugins: [HtmlWebpackPluginConfig]  
+  plugins: [
+    HtmlWebpackPluginConfig,
+    new webpack.HotModuleReplacementPlugin()
+  ]  
 }

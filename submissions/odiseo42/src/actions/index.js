@@ -29,72 +29,77 @@ function getRequest(sithId) {
   return { request, promise };
 }
 
-function loadSiths() {
-  return (dispatch, getState) => {
-    const state = getState();
-    sithsToLoad(state)
-      .map((sithToLoad) => {
-        return {
-          direction: sithToLoad.direction,
-          req: getRequest(sithToLoad.id)
-        };
-      })
-      .forEach(({ direction, req }) => {
-        dispatch({
-          type: LOADING_SITH,
-          direction,
-          request: req.request
-        });
+const thunks = {};
 
-        req.promise.then((sith) => {
-          dispatch({ type: SITH_LOADED, direction, sith });
+thunks.cancelUnnecessaryRequests = () => (dispatch, getState) => {
+  const state = getState();
+  requestsToCancel(state).forEach(({ request, direction }) => {
+    request.abort();
+    dispatch({ type: ABORT_REQUEST, direction });
+  });
+};
 
-          const dispatchNext = redMatch(state) ?
-            cancelUnnecessaryRequests :
-            loadSiths;
-          
-          dispatch(dispatchNext());
-        },
-        (err) => {
-          if(err.message !== ABORT_MSG) throw err;
-        });
+thunks.loadSiths = () => (dispatch, getState) => {
+  const state = getState();
+  sithsToLoad(state)
+    .map((sithToLoad) => {
+      return {
+        direction: sithToLoad.direction,
+        req: getRequest(sithToLoad.id)
+      };
+    })
+    .forEach(({ direction, req }) => {
+      dispatch({
+        type: LOADING_SITH,
+        direction,
+        request: req.request
       });
-  };
-}
 
-function cancelUnnecessaryRequests() {
-  return (dispatch, getState) => {
-    requestsToCancel(getState()).forEach(({ request, direction }) => {
-      request.abort();
-      dispatch({ type: ABORT_REQUEST, direction });
+      req.promise.then((sith) => {
+        dispatch({ type: SITH_LOADED, direction, sith });
+
+        const dispatchNext = redMatch(state) ?
+          thunks.cancelUnnecessaryRequests :
+          thunks.loadSiths;
+          
+        dispatch(dispatchNext());
+      },
+      (err) => {
+        if(err.message !== ABORT_MSG) throw err;
+      });
     });
-  };
-}
+};
 
-export function initialRequest() {
-  return (dispatch) => dispatch(loadSiths([DOWN]));
-}
+thunks.initialRequest = () => (dispatch) => dispatch(thunks.loadSiths([DOWN]));
 
-export function scroll(direction) {
-  return (dispatch) => {
-    dispatch({ type: direction });
-    dispatch(cancelUnnecessaryRequests());
-    dispatch(loadSiths());
-  };
-}
+thunks.scroll = (direction) => (dispatch) => {
+  dispatch({ type: direction });
+  dispatch(thunks.cancelUnnecessaryRequests());
+  dispatch(thunks.loadSiths());
+};
 
-export function obiWanMoved(planet) {
-  return (dispatch, getState) => {
-    const redMatchBefore = redMatch(getState());
-    dispatch({
-      type: OBI_WAN_MOVED,
-      planet
-    });
-    const redMatchAfter = redMatch(getState());
+thunks.obiWanMoved = (planet) => (dispatch, getState) => {
+  const redMatchBefore = redMatch(getState());
+  dispatch({
+    type: OBI_WAN_MOVED,
+    planet
+  });
+  const redMatchAfter = redMatch(getState());
 
-    if(redMatchBefore !== redMatchAfter) {
-      const action = redMatchAfter ? cancelUnnecessaryRequests : loadSiths;
-      dispatch(action());
-    }
-  };
-}
+  if(redMatchBefore !== redMatchAfter) {
+    const action = redMatchAfter ? thunks.cancelUnnecessaryRequests : thunks.loadSiths;
+    dispatch(action());
+  }
+};
+
+
+export {thunks};
+
+
+
+
+
+
+
+
+

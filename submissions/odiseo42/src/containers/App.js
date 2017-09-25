@@ -5,11 +5,9 @@ import PlanetMonitor from '../components/PlanetMonitor';
 import Siths from '../components/Siths';
 import ScrollButtons from '../components/ScrollButtons';
 import {
-  initialRequest,
-  obiWanMoved,
-  scroll,
   UP,
-  DOWN
+  DOWN,
+  thunks,
 } from '../actions';
 import { OBI_WS } from '../config';
 
@@ -92,16 +90,16 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => ({
   obiWanMoved: (e) => {
-    dispatch(obiWanMoved(JSON.parse(e.data)));    
+    dispatch(thunks.obiWanMoved(JSON.parse(e.data)));    
   },
   initialRequest: () => {
-    dispatch(initialRequest());
+    dispatch(thunks.initialRequest());
   },
   scrollUp: () => {
-    dispatch(scroll(UP));
+    dispatch(thunks.scroll(UP));
   },
   scrollDown: () => {
-    dispatch(scroll(DOWN));
+    dispatch(thunks.scroll(DOWN));
   },
 });
 

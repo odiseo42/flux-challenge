@@ -7,13 +7,13 @@ const webpack = require('webpack');
 
 
 const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
-  template: './src/index.html',
+  template: 'index.html',
   filename: 'index.html',
   inject: 'body'
 });
 
 module.exports = {
-  entry: './src/app.js',
+  entry: './src/index.js',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
@@ -33,11 +33,7 @@ module.exports = {
       {
         test: /\.jsx$/, loader: 
         'babel-loader', exclude: /node_modules/
-      },
-      {
-        test: /\.css$/,
-        use: [ 'style-loader', 'css-loader' ]
-      },
+      }
     ]
   },  
   plugins: [

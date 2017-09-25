@@ -8,9 +8,11 @@ const store = configureStore();
 
 React;
 const renderApp = () => {
-  ReactDOM.render(<Provider store={store}>
-    <App />
-  </Provider>, document.getElementById('app'));
+  ReactDOM.render(
+    <Provider store={store}>
+      <App />
+    </Provider>,
+    document.getElementById('app'));
 };
 
 renderApp();

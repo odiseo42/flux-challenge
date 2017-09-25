@@ -11,8 +11,8 @@ export default class Siths extends Component {
         )}
         {siths.map((sith) =>
           <li className="css-slot"
-              key = {sith.id}
-              style={this.isObiInSithHomeworld(sith) ? { color: 'red' } : null}>
+            key = {sith.id}
+            style={this.isObiInSithHomeworld(sith) ? { color: 'red' } : null}>
             <h3>{sith.name}</h3>
             <h6>Homeworld: {sith.homeworld.name}</h6>
           </li>

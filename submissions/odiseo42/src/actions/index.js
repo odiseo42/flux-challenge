@@ -33,32 +33,32 @@ function getRequest(sithId) {
 function loadSiths() {
   return (dispatch, getState) => {
     sithsToLoad(getState())
-    .map((sithToLoad) => {
-      return {
-        direction: sithToLoad.direction,
-        req: getRequest(sithToLoad.id)
-      };
-    })
-    .forEach(({ direction, req }) => {
-      dispatch({
-        type: LOADING_SITH,
-        direction,
-        request: req.request
-      });
+      .map((sithToLoad) => {
+        return {
+          direction: sithToLoad.direction,
+          req: getRequest(sithToLoad.id)
+        };
+      })
+      .forEach(({ direction, req }) => {
+        dispatch({
+          type: LOADING_SITH,
+          direction,
+          request: req.request
+        });
 
-      req.promise.then((sith) => {
-        dispatch({ type: SITH_LOADED, direction, sith });
+        req.promise.then((sith) => {
+          dispatch({ type: SITH_LOADED, direction, sith });
 
-        const dispatchNext = redMatch(getState()) ?
-          cancelUnnecessaryRequests :
-          loadSiths;
-        R.compose(dispatch, dispatchNext)();
-      },
-      (err) => {
-        if(err.message !== ABORT_MSG) throw err
+          const dispatchNext = redMatch(getState()) ?
+            cancelUnnecessaryRequests :
+            loadSiths;
+          R.compose(dispatch, dispatchNext)();
+        },
+        (err) => {
+          if(err.message !== ABORT_MSG) throw err;
+        });
       });
-    });
-  }
+  };
 }
 
 function cancelUnnecessaryRequests() {
@@ -67,7 +67,7 @@ function cancelUnnecessaryRequests() {
       request.abort();
       dispatch({ type: ABORT_REQUEST, direction });
     });
-  }
+  };
 }
 
 export function initialRequest() {
@@ -79,7 +79,7 @@ export function scroll(direction) {
     dispatch({ type: direction });
     dispatch(cancelUnnecessaryRequests());
     dispatch(loadSiths());
-  }
+  };
 }
 
 export function obiWanMoved(planet) {
@@ -95,5 +95,5 @@ export function obiWanMoved(planet) {
       const action = redMatchAfter ? cancelUnnecessaryRequests : loadSiths;
       R.compose(dispatch, action)();
     }
-  }
+  };
 }

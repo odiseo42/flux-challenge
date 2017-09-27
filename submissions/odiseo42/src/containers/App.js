@@ -45,12 +45,17 @@ class App extends Component {
           <PlanetMonitor name={currentPlanet.name} />
 
           <section className="css-scrollable-list">
-            <Siths
-              siths={siths}
-              obiCurrentPlanetId={currentPlanet.id}
-              paddingTop={paddingTop}
-              paddingBottom={paddingBottom}
-            />
+            {currentPlanet.id ? 
+              <Siths
+                siths={siths}
+                obiCurrentPlanetId={currentPlanet.id}
+                paddingTop={paddingTop}
+                paddingBottom={paddingBottom}
+              />
+              :
+              null
+            }
+            
 
             <ScrollButtons
               onScrollUp={scrollUp}
